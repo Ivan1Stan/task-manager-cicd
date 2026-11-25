@@ -31,7 +31,7 @@ pipeline {
         stage('Build and Verify') {
             steps {
                 echo 'Запуск полной проверки проекта'
-                bat 'mvn -B -ntp clean verify'
+                bat 'mvnw -B -ntp clean verify'
             }
         }
 
