@@ -69,7 +69,7 @@ post {
             string(credentialsId: 'telegram-chat-id', variable: 'TG_CHAT_ID')
         ]) {
             powershell '''
-                $msg = "Jenkins: сборка task-manager завершилась успешно. Build #$env:BUILD_NUMBER"
+                $msg = "SUCCESS: Jenkins build for task-manager completed successfully. Build #$env:BUILD_NUMBER"
                 $url = "https://api.telegram.org/bot$env:TG_TOKEN/sendMessage"
                 $body = @{
                     chat_id = $env:TG_CHAT_ID
@@ -89,7 +89,7 @@ post {
             string(credentialsId: 'telegram-chat-id', variable: 'TG_CHAT_ID')
         ]) {
             powershell '''
-                $msg = "Jenkins: сборка task-manager завершилась ошибкой. Build #$env:BUILD_NUMBER"
+                $msg = "FAILURE: Jenkins build for task-manager failed. Build #$env:BUILD_NUMBER"
                 $url = "https://api.telegram.org/bot$env:TG_TOKEN/sendMessage"
                 $body = @{
                     chat_id = $env:TG_CHAT_ID
@@ -110,7 +110,7 @@ post {
             string(credentialsId: 'telegram-chat-id', variable: 'TG_CHAT_ID')
         ]) {
             powershell '''
-                $msg = "Jenkins: сборка task-manager нестабильна. Build #$env:BUILD_NUMBER"
+                $msg = "UNSTABLE: Jenkins build for task-manager is unstable. Build #$env:BUILD_NUMBER"
                 $url = "https://api.telegram.org/bot$env:TG_TOKEN/sendMessage"
                 $body = @{
                     chat_id = $env:TG_CHAT_ID
