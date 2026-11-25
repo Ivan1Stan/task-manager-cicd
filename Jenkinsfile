@@ -22,7 +22,7 @@ pipeline {
                 echo 'Проверка Java'
                 bat 'java -version'
                 echo 'Проверка Maven'
-                bat 'mvnw -version'
+                bat 'mvn -version'
                 echo 'Проверка Git'
                 bat 'git --version'
             }
@@ -31,7 +31,7 @@ pipeline {
         stage('Build and Verify') {
             steps {
                 echo 'Запуск полной проверки проекта'
-                bat 'mvn_DOES_NOT_EXIST -B -ntp clean verify'
+                bat 'mvn -B -ntp clean verify'
             }
         }
 
