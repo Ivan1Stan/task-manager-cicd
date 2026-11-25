@@ -31,7 +31,7 @@ pipeline {
         stage('Build and Verify') {
             steps {
                 echo 'Запуск полной проверки проекта'
-                bat 'mvnw -B -ntp clean verify'
+                bat 'mvn_DOES_NOT_EXIST -B -ntp clean verify'
             }
         }
 
