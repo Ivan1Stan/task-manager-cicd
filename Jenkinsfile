@@ -22,7 +22,7 @@ pipeline {
                 echo 'Проверка Java'
                 bat 'java -version'
                 echo 'Проверка Maven'
-                bat 'mvn -version'
+                bat 'mvnw -version'
                 echo 'Проверка Git'
                 bat 'git --version'
             }
