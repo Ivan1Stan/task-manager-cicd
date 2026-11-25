@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'unknown-java-agent'
+        'windows-java21-agent'
     }
 
     options {
