@@ -59,11 +59,10 @@ pipeline {
         }
 
         success {
-            archiveArtifacts(
-                artifacts: 'target/task-manager-0.0.1-SNAPSHOT.jar',
-                fingerprint: true,
-                allowEmptyArchive: true
-            )
+	    archiveArtifacts(
+    	    	artifacts: 'target/incorrect-name.jar',
+    	    	fingerprint: true
+	    )
             echo 'Pipeline выполнен успешно.'
         }
 
