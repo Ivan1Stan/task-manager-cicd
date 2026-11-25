@@ -95,7 +95,7 @@ class TaskServiceTest {
     }
 
     /**
-     * Новый модульный тест.
+     * Новый модульный тест. И новый комментарий
      */
     @Test
     void changeStatusThrowsForUnknownTask() {
