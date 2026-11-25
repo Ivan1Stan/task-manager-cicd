@@ -94,6 +94,15 @@ class TaskServiceTest {
         assertThrows(TaskNotFoundException.class, () -> service.findById(999L));
     }
 
+    /**
+     * Новый модульный тест.
+     */
+    @Test
+    void changeStatusThrowsForUnknownTask() {
+        assertThrows(TaskNotFoundException.class,
+                () -> service.changeStatus(999L, TaskStatus.DONE));
+    }
+
     @Test
     void changeStatusPreservesPriority() {
         Task created = service.create("Review report", "", TaskPriority.HIGH);
