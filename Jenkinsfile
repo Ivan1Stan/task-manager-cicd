@@ -45,35 +45,84 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            junit(
-                allowEmptyResults: true,
-                testResults: 'target/surefire-reports/TEST-*.xml,target/failsafe-reports/TEST-*.xml'
-            )
+post {
+    always {
+        junit(
+            allowEmptyResults: true,
+            testResults: 'target/surefire-reports/TEST-*.xml,target/failsafe-reports/TEST-*.xml'
+        )
 
-            archiveArtifacts(
-                artifacts: 'target/surefire-reports/**,target/failsafe-reports/**,target/site/**',
-                allowEmptyArchive: true
-            )
-        }
-
-        success {
-	    archiveArtifacts(
-    		artifacts: 'target/task-manager-0.0.1-SNAPSHOT.jar',
-    		fingerprint: true
-	    )
-            echo 'Pipeline выполнен успешно.'
-        }
-
-        failure {
-            echo 'Pipeline завершился с ошибкой.'
-            echo 'Необходимо изучить Console Output и отчёты.'
-        }
-
-        unstable {
-            echo 'Pipeline имеет статус UNSTABLE.'
-            echo 'Необходимо проверить результаты тестирования.'
-        }
+        archiveArtifacts(
+            artifacts: 'target/surefire-reports/**,target/failsafe-reports/**,target/site/**',
+            allowEmptyArchive: true
+        )
     }
+
+    success {
+        archiveArtifacts(
+            artifacts: 'target/task-manager-0.0.1-SNAPSHOT.jar',
+            fingerprint: true
+        )
+
+        withCredentials([
+            string(credentialsId: 'telegram-bot-token', variable: 'TG_TOKEN'),
+            string(credentialsId: 'telegram-chat-id', variable: 'TG_CHAT_ID')
+        ]) {
+            powershell '''
+                $msg = "Jenkins: сборка task-manager завершилась успешно. Build #$env:BUILD_NUMBER"
+                $url = "https://api.telegram.org/bot$env:TG_TOKEN/sendMessage"
+                $body = @{
+                    chat_id = $env:TG_CHAT_ID
+                    text    = $msg
+                } | ConvertTo-Json
+
+                Invoke-RestMethod -Uri $url -Method Post -ContentType "application/json" -Body $body
+            '''
+        }
+
+        echo 'Pipeline выполнен успешно.'
+    }
+
+    failure {
+        withCredentials([
+            string(credentialsId: 'telegram-bot-token', variable: 'TG_TOKEN'),
+            string(credentialsId: 'telegram-chat-id', variable: 'TG_CHAT_ID')
+        ]) {
+            powershell '''
+                $msg = "Jenkins: сборка task-manager завершилась ошибкой. Build #$env:BUILD_NUMBER"
+                $url = "https://api.telegram.org/bot$env:TG_TOKEN/sendMessage"
+                $body = @{
+                    chat_id = $env:TG_CHAT_ID
+                    text    = $msg
+                } | ConvertTo-Json
+
+                Invoke-RestMethod -Uri $url -Method Post -ContentType "application/json" -Body $body
+            '''
+        }
+
+        echo 'Pipeline завершился с ошибкой.'
+        echo 'Необходимо изучить Console Output и отчёты.'
+    }
+
+    unstable {
+        withCredentials([
+            string(credentialsId: 'telegram-bot-token', variable: 'TG_TOKEN'),
+            string(credentialsId: 'telegram-chat-id', variable: 'TG_CHAT_ID')
+        ]) {
+            powershell '''
+                $msg = "Jenkins: сборка task-manager нестабильна. Build #$env:BUILD_NUMBER"
+                $url = "https://api.telegram.org/bot$env:TG_TOKEN/sendMessage"
+                $body = @{
+                    chat_id = $env:TG_CHAT_ID
+                    text    = $msg
+                } | ConvertTo-Json
+
+                Invoke-RestMethod -Uri $url -Method Post -ContentType "application/json" -Body $body
+            '''
+        }
+
+        echo 'Pipeline имеет статус UNSTABLE.'
+        echo 'Необходимо проверить результаты тестирования.'
+    }
+}
 }
