@@ -1,0 +1,60 @@
+name: Java Application CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Show toolchain
+        shell: pwsh
+        run: |
+          java -version
+          mvn -version
+          git --version
+
+      - name: Build and verify
+        shell: pwsh
+        run: mvn -B -ntp clean verify
+
+      - name: Generate Surefire HTML report
+        shell: pwsh
+        run: mvn -B -ntp surefire-report:report-only
+
+      - name: Generate JaCoCo HTML report
+        shell: pwsh
+        run: mvn -B -ntp jacoco:report
+
+      - name: Upload test reports (Windows)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-windows
+          path: |
+            target/surefire-reports/**
+            target/failsafe-reports/**
+            target/site/surefire-report.html
+            target/site/jacoco/**
+
+      - name: Upload application JAR
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: task-manager-jar
+          path: target/task-manager-0.0.1-SNAPSHOT.jar
