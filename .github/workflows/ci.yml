@@ -58,3 +58,4 @@ jobs:
         with:
           name: task-manager-jar
           path: target/incorrect-name.jar
+	  if-no-files-found: error
